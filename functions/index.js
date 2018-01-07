@@ -10,7 +10,7 @@ const app = express()
 const BASE_URL_API = 'https://gat-dev-improvement.azurewebsites.net/api/'
 const BASE_IMAGE_URL_API = BASE_URL_API + 'common/get_image/';
 const BASE_URL = "https://gatbook.org/";
-const BASE_IMAGE_URL = 'https://www.flickr.com/photos/148671066@N06/27775659239/';
+const BASE_IMAGE_URL = BASE_IMAGE_URL_API + '39552026541';
 
 const DEFAULT_SITE_NAME = "GaT - Give and Take the Book";
 const DEFAULT_DESCRIPTION = 'Ứng dụng trao đổi, mượn sách miễn phí dựa trên nền tảng của ý thức và sự tin tưởng.';
@@ -49,21 +49,21 @@ app.get('**', (req, res) => {
   // Check request from facebook or twitter
   var isFacebook = userAgent.indexOf('facebook') > -1;
   var isTwitter = userAgent.indexOf('twitter') > -1;
-  console.log('Request link: ' + currentRequest.path);
-  console.log('User Agent: ' + userAgent);
+  // console.log('Request link: ' + currentRequest.path);
+  // console.log('User Agent: ' + userAgent);
   if (isFacebook || isTwitter) {
     const splitPath = currentRequest.path.split('/');
     // Request Book Detail Page
     if (currentRequest.path.indexOf(URL_BOOK_DETAIL) > -1) {
-      console.log('Call API Book detail');
+      // console.log('Call API Book detail');
       const postId = splitPath[2];
       request(BASE_URL_API + api_get_book_info.replace(PARAM_01, postId), handlingRequestBookDetail);
     } else if (currentRequest.path.indexOf(URL_USER_VISITOR) > -1) { // Request User Visitor Page
-      console.log('Call API User');
+      // console.log('Call API User');
       const postId = splitPath[2];
       request(BASE_URL_API + api_get_user_public_info.replace(PARAM_01, postId), handlingRequestUser);
     } else {
-      console.log('Display base meta data');
+      // console.log('Display base meta data');
       res.status(200).send(buildHtmlWithPost(BASE_DATA, index))
     }
   } else {
@@ -76,13 +76,13 @@ app.get('**', (req, res) => {
       }
     };
 
-    console.log("IOS: " + isMobile.iOS() + "-- Android: " + isMobile.android())
+    // console.log("IOS: " + isMobile.iOS() + "-- Android: " + isMobile.android())
     // If use mobile device, go to store
     if (isMobile.iOS()) {
-      console.log("Mo IOS Store");
+      // console.log("Mo IOS Store");
       res.redirect('https://itunes.apple.com/vn/app/gat/id1230316898?mt=8');
     } else if (isMobile.android()) {
-      console.log("Mo Android Store");
+      // console.log("Mo Android Store");
       res.redirect('https://play.google.com/store/apps/details?id=com.gat');
     } else {
       res.status(200).send(buildHtmlWithPost(BASE_DATA, index))
@@ -94,13 +94,13 @@ function handlingRequestBookDetail(error, response, body) {
   if (!error && response.statusCode == 200) {
     var jsonData = JSON.parse(body);
     var data = jsonData.data.resultInfo;
-    console.log('Response of API:');
+    // console.log('Response of API:');
     console.log(data);
     data.url = (BASE_URL + currentRequest.path).replace("//", "/");
     data.imageURL = BASE_IMAGE_URL_API + data.imageId;
     currentResponse.status(200).send(buildHtmlWithPost(data, index))
   } else {
-    console.log('call api is failed')
+    // console.log('call api is failed')
     currentResponse.status(200).send(buildHtmlWithPost(BASE_DATA, index))
   }
 }
@@ -109,8 +109,8 @@ function handlingRequestUser(error, response, body) {
   if (!error && response.statusCode == 200) {
     var jsonData = JSON.parse(body);
     var data = jsonData.data.resultInfo;
-    console.log('Response of API:');
-    console.log(data);
+    // console.log('Response of API:');
+    // console.log(data);
     data.url = (BASE_URL + currentRequest.path).replace("//", "/");
     data.imageURL = BASE_IMAGE_URL_API + data.imageId;
     data.title = data.name;
@@ -123,7 +123,7 @@ function handlingRequestUser(error, response, body) {
     }
     currentResponse.status(200).send(buildHtmlWithPost(data, index))
   } else {
-    console.log('call api is failed')
+    // console.log('call api is failed')
     currentResponse.status(200).send(buildHtmlWithPost(BASE_DATA, index))
   }
 }
@@ -177,8 +177,8 @@ function buildHtmlWithPost(data, indexHtml) {
       }
     }
   });
-  console.log('meta data: ');
-  console.log(stringMetaHTML);
+  // console.log('meta data: ');
+  // console.log(stringMetaHTML);
   return indexHtml.replace(strReplaceMetaData, stringMetaHTML);
 }
 
